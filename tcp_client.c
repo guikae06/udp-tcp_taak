@@ -13,10 +13,13 @@ int main() {
     int guess, network_guess;
     char server_reply[2000];
     int recv_size;
+	int  poort_addr;
     char server_ip[100];
 
     printf("Enter server IP address: ");
     scanf("%s", server_ip);
+	//printf("Enter poort: ");
+    //scanf("%s", &poort_addr);
 
     printf("Initialising Winsock...\n");
     if (WSAStartup(MAKEWORD(2,2), &wsa) != 0) {
@@ -33,7 +36,7 @@ int main() {
 
     server.sin_addr.s_addr = inet_addr(server_ip);
     server.sin_family = AF_INET;
-    server.sin_port = htons(8888);
+    server.sin_port = htons(/*poort_addr*/8888);
 
     if (connect(sock, (struct sockaddr *)&server, sizeof(server)) < 0) {
         printf("Connect error\n");
@@ -41,24 +44,28 @@ int main() {
     }
     printf("Connected to server.\n");
 
-    while (1) {
-        printf("Enter your guess (-1 to quit): ");
-        scanf("%d", &guess);
+	while (1) {
+		printf("Enter your guess (-1 to quit): ");
+		scanf("%d", &guess);
 
-        network_guess = htonl(guess);
-        send(sock, (char *)&network_guess, sizeof(network_guess), 0);
+		network_guess = htonl(guess);
+		send(sock, (char *)&network_guess, sizeof(network_guess), 0);
 
-        if ((recv_size = recv(sock, server_reply, 2000, 0)) == SOCKET_ERROR) {
-            puts("recv failed");
-            break;
-        }
-        server_reply[recv_size] = '\0';
-        printf("Server response: %s\n", server_reply);
+		if ((recv_size = recv(sock, server_reply, 2000, 0)) == SOCKET_ERROR) {
+			puts("recv failed");
+			break;
+		}
+		server_reply[recv_size] = '\0';
+		printf("Server response: %s\n", server_reply);
 
-        if (strcmp(server_reply, "Correct") == 0 || guess == -1) {
-            break;
-        }
-    }
+		if (guess == -1 || strcmp(server_reply, "Einde") == 0) {
+			break; // alleen stoppen bij -1 of expliciet "Einde" van de server
+		}
+
+		// automatisch verdergaan bij "Corre`ct", nieuwe ronde start vanzelf op server
+	}
+
+
 
     closesocket(sock);
     WSACleanup();
