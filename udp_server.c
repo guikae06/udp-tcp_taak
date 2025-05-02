@@ -16,7 +16,7 @@ int main() {
     int random_number;
     int guess, best_guess = -9999, best_diff = 9999;
     int recv_size;
-    DWORD timeout = 8000; // 8 seconden
+    DWORD timeout = 16000; // 16 seconden
     fd_set readfds;
     struct timeval tv;
     int activity;
@@ -77,9 +77,12 @@ int main() {
                 best_guess = guess;
             }
 
-            // Na elke guess, reset timeout naar 8 sec opnieuw
-            timeout = 8000;
-        } else {
+            //Timeout halveren tot minimum van 500ms
+               if (timeout > 500){
+					timeout /= 2;
+				}
+        } 
+		else {
             // Timeout gebeurd
             printf("Timeout event.\n");
 
@@ -106,7 +109,7 @@ int main() {
                 printf("Second timeout, server restart...\n");
                 random_number = rand() % 100 + 1;
                 printf("Generated new number: %d\n", random_number);
-                timeout = 8000;
+                timeout = 16000;
             } else {
                 // Eventueel late berichten nog ontvangen
                 recvfrom(server_socket, buffer, sizeof(buffer), 0, (struct sockaddr *)&client, &client_len);
@@ -114,7 +117,7 @@ int main() {
 
                 random_number = rand() % 100 + 1;
                 printf("Generated new number: %d\n", random_number);
-                timeout = 8000;
+                timeout = 16000;
             }
         }
     }
