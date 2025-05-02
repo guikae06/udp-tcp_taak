@@ -62,7 +62,7 @@ int main() {
 			break; // alleen stoppen bij -1 of expliciet "Einde" van de server
 		}
 
-		// automatisch verdergaan bij "Corre`ct", nieuwe ronde start vanzelf op server
+		// automatisch verdergaan bij "Correct", nieuwe ronde start vanzelf op server
 	}
 
 
