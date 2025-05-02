@@ -19,6 +19,7 @@ DWORD WINAPI client_handler(LPVOID client_socket_ptr) { //DWORD staat voor doubl
     int recv_size;
 
     while (1) {
+	srand(time(NULL));
         int random_number = rand() % 100 + 1;
         printf("New round for %s, number = %d\n", inet_ntoa(client.sin_addr), random_number);
  
@@ -45,7 +46,9 @@ DWORD WINAPI client_handler(LPVOID client_socket_ptr) { //DWORD staat voor doubl
                 send(client_socket, "Hoger", 6, 0);
             } else {
                 send(client_socket, "Correct", 8, 0);
-				break;
+		closesocket(client_socket);
+		break;
+		
                  // nieuwe ronde
             }
 		}
@@ -120,4 +123,3 @@ int main() {
 
     return 0;
 }
-
